@@ -1,10 +1,59 @@
 ---
-title: "sophia_leiker_snowshoe_report"
+title: "Snowshoe Report"
 author: "Sophia Leiker"
 date: "11/4/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+
 ```
+
+## 1. Introduction
+
+SOPHIA RETURN TO THIS AT THE END
+you will explore the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012.
+
+***
+
+## 2. Data and Analysis 
+
+[Bonanza Creek LTER](https://www.lter.uaf.edu/research) is part of the US Long Term Ecological Research Network that is through the Institute of Arctic Biology at the University of Alaska Fairbanks. The data being used for this analysis is avalible from Kielland, K., F.S. Chapin, R.W. Ruess and their study [Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present](https://portal.edirepository.org/nis/metadataviewer?packageid=knb-lter-bnz.55.22) where they "conducted capture-recapture studies of snowshoe hares at 5 locales in the Tanana valley, from Tok in the east to Clear in the west from 1999 to 2002." In their study they found that Snowshoe hare densities were highest in 1999 ( =6.36 ha-1, SE=0.63) and declined thereafter. They were unable to detect declines in apparent survival during declining densities in studied study populations. They stated that the movement distances did not vary temporally and persistence of individuals through declining densities may be associated positively with body condition at the peak. 
+
+***
+
+## 3. Annual Juvenile Hare Trap Counts 
+
+***
+
+## 4. Juvenile Hare Weights
+
+***
+
+## 5. Juvenile Weight Comparison (Male vs Female)
+
+***
+
+## 6. Relationship Between Juvenile Weight & Hindfoot Length
+
+***
+
+## 7. Summary
+
+***
+
+
+
+
+
+
+
+
+
+
+
+## 8. Citations
+**Data citation**: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative.https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
+
