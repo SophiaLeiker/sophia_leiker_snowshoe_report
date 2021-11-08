@@ -20,9 +20,14 @@ library(janitor)
 SOPHIA RETURN TO THIS AT THE END
 you will explore the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012.
 
-#![Snowshoe Hare](https://cff2.earth.com/uploads/2021/10/08090101/shutterstock_5195162772-960x640.jpg){width=60%}
+<center>
+
+![Snowshoe Hare](https://cff2.earth.com/uploads/2021/10/08090101/shutterstock_5195162772-960x640.jpg){width=60%}
+
 
 **Figure 1.** Snowshoe Hare. *Photo Credit:  Andrei Ionescu, Earth.com Staff Writer*
+
+</center>
 
 ***
 
@@ -39,11 +44,13 @@ hares <- read_csv(here("data", "bonanza_hares.csv"))
 
 ## 3. Annual Juvenile Hare Trap Counts 
 
-Annual juvenile hare trap counts were counted during each year of the study. This was done through the use of 
+- Annual juvenile hare trap counts were counted during each year of the study
+- Grouping and summarizing to assess the counts each year
 
 ```{r}
 # Converting the date to mdy format and then mutating to pull out the year 
 hare_counts <- hares %>% 
+  filter(age == "j") %>% 
   mutate(date = mdy(date)) %>% 
   mutate(year = year(date))
 
@@ -56,23 +63,73 @@ hare_table <- hare_counts %>%
 
 ```{r}
 ggplot(data = hare_table, aes(x = year, y = total)) +
-  geom_col() +
+  geom_col(color = "white", fill = "cyan4") +
   labs(x = "Year", y = "Total Juvenile Hare Trappings", title = "Count of Total Juvenile Hare Trappings Per Year", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER") +
-  theme_minimal()
+  theme_grey() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_x_continuous(breaks = 1999:2012)
+```
+
+**Figure 2.** Count of total juvenile hare trappings from 1999 to 2012
+
+```{r hare analysis}
+hare_table_stats <- hare_table %>% 
+  summarise(hare_mean = round(mean(total),1),
+            hare_median = median(total),
+            hare_sd = round(sd(total),1),
+            hare_max = max(total),
+            hare_min = min(total)
+            )
 ```
 
 
 
-**Table 1.** Count of Hare Trappings for Each Year of Study
+**Analysis**: The minimum count of juvenile hare trapping (for those years where juvenile hares were actually trapped therefore values over 0), is `r hare_table_stats$hare_min`, the maximum count of juvenile hare trapping is `r hare_table_stats$hare_max`. The mean of juvenile hare trapping is `r hare_table_stats$hare_mean`, the median is `r hare_table_stats$hare_median`. The standard deviation of the count of juvenile hare trapping is `r hare_table_stats$hare_sd`. In general there was a high number of juvenile hares trapped in 1999 and 2000, but there is a trend of decreasing hare traps moving towards 2012, with spikes in 2005 and 2008. Moving forward in order to standardize the analysis of juvenile hare populations I would recommend ensuring that for each year that traps are put out for the study, they are left out the same number of days, checked at the same frequency, and placed in the same locations. By doing this, one can eliminate factors such as the habitat preferences of the hares and make sure that there is consistency across years. 
+
+
+
+**Table 1.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile hare trap counts
 ```{r descriptive_stats}
-hare_table %>% 
-  kbl(col.names = c("Year", "Count of Hare Trappings")) %>% 
+hare_table_stats %>% 
+  kbl(col.names = c("Count Mean", "Count Median", "Count Standard Deviation", "Count Max", "Count Min")) %>% 
   kable_styling(bootstrap_options = "striped", full_width = FALSE)
+
 ```
 
 ***
 
 ## 4. Juvenile Hare Weights
+
+- Comparing juvenile hare weights by sex and site (grid)
+- 
+
+```{r comparing weights by sex and site}
+
+hare_weights <- hare_counts %>% 
+  group_by(sex, grid) %>% 
+  mutate(sex = case_when(
+    sex == "f" ~ "Female",
+    sex == "m" ~ "Male", 
+    is.na(sex) == TRUE ~ "Unknown")) %>% 
+  mutate(grid = case_when(
+    grid == "bonrip" ~ "Bonanza Riparian",
+    grid == "bonmat" ~ "Bonanza Mature",
+    grid == "bonbs" ~ "Mature Lowland Black Spruce Stand"
+  ))
+  #summarize(weight_mean = mean(weight))
+```
+
+```{r plotting}
+ggplot(data = hare_weights, aes(x= weight, fill = sex)) + 
+  geom_histogram() +
+  facet_wrap(~grid + sex) +
+  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Hare Weights by Site and Sex", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER") +
+  guides(fill = guide_legend(title = "Hare Sex")) + 
+  theme_grey()
+
+```
+
+
 
 ***
 
