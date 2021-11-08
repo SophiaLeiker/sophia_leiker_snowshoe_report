@@ -169,11 +169,56 @@ male_spruce <- round(mean(hare_males_spruce), 1)
 
 ```{r}
 hare_females <- hare_weights %>% 
-  filter(sex == "Female") %>% 
-  pull(weight) %>% 
-  na.omit()
+  filter(sex == "Female")
+
+print(hare_females)
+
+hare_males <- hare_weights %>% 
+  filter(sex == "Male")
 ```
 
+```{r include=FALSE}
+#CREATING Exploratory graphs (e.g. histograms, QQ-plots) to explore assumptions of the t-test
+
+#Lets create some histograms
+ggplot(data = hare_weights, aes(x= weight, fill = sex)) + 
+  geom_histogram() +
+  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Hare Weights by Sex", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
+
+ggplot(data = hare_females, aes(x= weight)) + 
+  geom_histogram() +
+  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Female Hare Weights", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
+
+
+# Lets make some QQ plots
+ggplot(data = hare_females, aes(sample = weight)) +
+  geom_qq() +
+  labs(title = "QQ for Females")
+
+ggplot(data = hare_males, aes(x= weight)) + 
+  geom_histogram() +
+  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Male Hare Weights", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
+
+ggplot(data = hare_males, aes(sample = weight)) +
+  geom_qq() +
+  labs(title = "QQ for Males")
+```
+
+```{r}
+hare_female_stats <- hare_females %>% 
+  summarise(female_mean = round(mean(weight),1)
+            #female_median = median(weight),
+           # female_sd = round(sd(weight),1),
+            #female_max = max(weight),
+            #female_min = min(weight)
+            )
+
+print(hare_female_stats)
+
+hare_female_stats %>% 
+  kbl(col.names = c("Female Weight Mean", "Female Weight Median", "Female Weeight Standard Deviation", "Female Weight Max", "Female Weight Min")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
 
 
 ***
