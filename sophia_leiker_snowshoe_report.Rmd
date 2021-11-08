@@ -101,8 +101,6 @@ hare_table_stats %>%
 
 ## 4. Juvenile Hare Weights
 
-- Comparing juvenile hare weights by sex and site (grid)
-- 
 
 ```{r comparing weights by sex and site}
 
@@ -115,19 +113,10 @@ hare_weights <- hare_counts %>%
   mutate(grid = case_when(
     grid == "bonrip" ~ "Bonanza Riparian",
     grid == "bonmat" ~ "Bonanza Mature",
-    grid == "bonbs" ~ "Mature Lowland Black Spruce Stand"
+    grid == "bonbs" ~ "Black Spruce"
   ))
-  #summarize(weight_mean = mean(weight))
 ```
 
-```{r plotting}
-ggplot(data = hare_weights, aes(x= weight, fill = sex)) + 
-  geom_histogram() +
-  facet_wrap(~grid + sex) +
-  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Hare Weights by Site and Sex", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER") +
-  guides(fill = guide_legend(title = "Hare Sex")) + 
-  theme_grey()
-```
 
 ```{r}
 ggplot(data = hare_weights, aes(x = sex, y = weight)) +
@@ -147,24 +136,45 @@ ggplot(data = hare_weights, aes(x = sex, y = weight)) +
 ```
 
 
-ggplot(data = penguins, aes(x = species, y = flipper_length_mm)) +
-  geom_beeswarm(aes(color = species)) +
-  scale_color_manual(values = c("goldenrod2","cyan4","coral")) +
-  geom_boxplot(fill = NA, width = 0.2, outlier.color = NA) +
-  stat_summary(fun=mean, 
-               geom="point", 
-               shape=20, 
-               size=4, 
-               color="black", 
-               fill="black") +
-  theme_minimal() +
-  labs(x = "\nPenguin species",
-       y = "Flipper length (mm)\n")
+**Figure 3.** Relationship between hare sex and hare weight (g) for the three sample sites. Points indicate individual hare measurements with red points indicating female hares, blue points indicating male hares and green points indicating an unknown hare sex. The black square indicates the mean for each set of observations. The box plots in black indicate the 25th and 75th percentile values of the data spread, the black line indicates the median value, the black box indicates the mean value for each juvenile hare sex category.
 
+
+```{r hare weight stats}
+hare_females_riparian <- hare_weights %>% 
+  filter(sex == "Female", grid == "Bonanza Riparian") %>% 
+  pull(weight) %>% 
+  na.omit()
+female_riparian <- round(mean(hare_females_riparian),1)
+
+hare_males_riparian <- hare_weights %>% 
+  filter(sex == "Male", grid == "Bonanza Riparian") %>% 
+  pull(weight) %>% 
+  na.omit()
+male_riparian <- round(mean(hare_males_riparian), 1)
+
+hare_males_spruce <- hare_weights %>% 
+  filter(sex == "Male", grid == "Black Spruce") %>% 
+  pull(weight) %>% 
+  na.omit()
+male_spruce <- round(mean(hare_males_spruce), 1)
+
+```
+
+
+**Analysis** Bonanza Riparian has most observations as illustrated by more points in the beeswarm plot. On average, the male juvenile hares had higher weights than the female juvenile hares across the three study sites. This can be seen in the Bonanza Riparian zone where the average weight of females is `r female_riparian` (g), and the average weight of males is `r male_riparian` (g). In general, there were fewer samples collected for the "unknown" juvenile hare sex category so statistics related to these samples may not be the most reflective of the actual population spread. The spread of Male observations was much higher in the Bonanza Mature cite and Bonanza Riparian in relation to the Black Spruce cite, this can be seen by the box plots having a larger interquartile range in these two cites for the male observations. On average, the observations for both male and female weights are higher in the black spruce sample site compared to the Bonanza Mature cite and Bonanza Riparian cites, with the highest average seen for the males in the Black Spruce cite with a value of `r male_spruce` (g).
 
 ***
 
 ## 5. Juvenile Weight Comparison (Male vs Female)
+
+```{r}
+hare_females <- hare_weights %>% 
+  filter(sex == "Female") %>% 
+  pull(weight) %>% 
+  na.omit()
+```
+
+
 
 ***
 
