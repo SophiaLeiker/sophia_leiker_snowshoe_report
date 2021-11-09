@@ -19,7 +19,7 @@ library(effsize)
 
 ## 1. Introduction
 
-This report explores counts, sizes and physical relationships of juvenile shownow hares as recoreded from 1998 to 2012. It provides an exporatory overview and assessment of juvenile hare's in relation to their weight, site trapped and hindfoot length. The 3 sites assessed are from 1) a Bonanza Riparian is a flood zone along the Tanana River 2) Bonanza Mature consisted of stands of mature white spruce, paper birch, and alder 3) a site located in a mature lowland black spruce stand. Specifically, this report assesses the change in annual juvenile hare trap counts starting in 1998, analyzes the distribution of hare weights by site and sex, compares juvenile Weight between males and females, and finally assesses how hindfoot length (mm) is related to juvenile hare weight. 
+This report explores counts, sizes and physical relationships of juvenile showshoe hares as recorded from 1998 to 2012. It provides an exploratory overview and assessment of juvenile hare's in relation to their weight, site trapped and hind foot length. The 3 sites assessed are from 1) Bonanza Riparian, a flood zone along the Tanana River 2) Bonanza Mature, consisted of stands of mature white spruce, paper birch, and alder 3) a site located in a mature lowland black spruce stand. Specifically, this report assesses the change in annual juvenile hare trap counts starting in 1998, analyzes the distribution of hare weights by site and sex, compares juvenile Weight between males and females, and finally assesses how hind foot length (mm) is related to juvenile hare weight. 
 
 
 
@@ -47,8 +47,7 @@ hares <- read_csv(here("data", "bonanza_hares.csv"))
 
 ## 3. Annual Juvenile Hare Trap Counts 
 
-- Annual juvenile hare trap counts were counted during each year of the study
-- Grouping and summarizing to assess the counts each year
+Annual juvenile hare trap counts were counted during each year of the study. This assessment groups by year to assess the annual juvenile hare trap counts.
 
 ```{r}
 # Converting the date to mdy format and then mutating to pull out the year 
@@ -70,7 +69,8 @@ ggplot(data = hare_table, aes(x = year, y = total)) +
   labs(x = "Year", y = "Total Juvenile Hare Trappings", title = "Count of Total Juvenile Hare Trappings Per Year", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER") +
   theme_grey() +
   theme(plot.title = element_text(hjust = 0.5)) +
-  scale_x_continuous(breaks = 1999:2012)
+  scale_x_continuous(breaks = 1999:2012) +
+  theme(plot.subtitle = element_text(hjust = 0.5))
 ```
 
 **Figure 2.** Count of total juvenile hare trappings from 1999 to 2012
@@ -133,12 +133,14 @@ ggplot(data = hare_weights, aes(x = sex, y = weight)) +
                shape=15, 
                size=3, 
                color="black", 
-               fill="black")
+               fill="black") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.subtitle = element_text(hjust = 0.5))
 
 ```
 
 
-**Figure 3.** Relationship between hare sex and hare weight (g) for the three sample sites. Points indicate individual hare measurements with red points indicating female hares, blue points indicating male hares and green points indicating an unknown hare sex. The black square indicates the mean for each set of observations. The box plots in black indicate the 25th and 75th percentile values of the data spread, the black line indicates the median value, the black box indicates the mean value for each juvenile hare sex category.
+**Figure 3.** Relationship between hare sex and hare weight (g) for the three sample sites. Points indicate individual hare measurements with red points indicating female hares, blue points indicating male hares and green points indicating an unknown hare sex. The box plots in black indicate the 25th and 75th percentile values of the data spread, the black line indicates the median value, the black square indicates the mean value for each juvenile hare sex category.
 
 
 ```{r hare weight stats}
@@ -288,7 +290,9 @@ hare_scatter <- ggplot(data =hare_weights, aes(x = hindft, y = weight)) +
                      name = "Hare Sex") +
   geom_smooth(method = lm, color = "black") +
   labs(x = "Hindfoot Length (mm)", y = "Weight (g)", title = "Relationship between Juvenile Hare Weight & Hind Foot Length", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER") +
-  scale_x_continuous()
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(plot.subtitle = element_text(hjust = 0.5)) +
+  theme_gray()
 
 hare_scatter
 ```
@@ -337,5 +341,7 @@ Exploratory data analysis reveals the following initial findings:
 
 
 ## 8. Citations
-**Data citation**: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative.https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
+**Data Citation**: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
+
+**Image Citation**: Ionescu, Andrei. “Snowshoe Hares with Less Camouflage Can Still Avoid Predators.” Earth.com: Nature, Science, Life, Earth.com, 21 Oct. 2021, https://www.earth.com/news/a-new-study-led-by-the-memorial-university-of-newfoundland-in-canada-has-found-that-snowshoe-hares-are-starting-to-lose-their-camouflage-abilities-due-to-climate-change/. 
 
