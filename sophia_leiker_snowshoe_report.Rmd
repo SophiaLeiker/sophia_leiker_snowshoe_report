@@ -175,25 +175,40 @@ male_spruce <- round(mean(hare_males_spruce), 1)
 hare_females_stats <- hare_weights %>% 
   filter(sex == "Female") %>% 
   group_by(grid) %>% 
-  summarise(mean_female = mean(weight, na.rm = TRUE),
+  summarise(mean_female = round(mean(weight, na.rm = TRUE),1),
             median_female = median(weight, na.rm = TRUE),
-            sd_female = sd(weight, na.rm = TRUE),
+            sd_female = round(sd(weight, na.rm = TRUE),1),
             max_female = max(weight, na.rm = TRUE),
             min_female = min(weight, na.rm = TRUE))
 
 hare_males_stats <- hare_weights %>% 
   filter(sex == "Male") %>%
    group_by(grid) %>% 
-  summarise(mean_male = mean(weight, na.rm = TRUE),
+  summarise(mean_male = round(mean(weight, na.rm = TRUE),1),
             median_male = median(weight, na.rm = TRUE),
-            sd_male = sd(weight, na.rm = TRUE),
+            sd_male = round(sd(weight, na.rm = TRUE),1),
+            max_male = max(weight, na.rm = TRUE),
+            min_male = min(weight, na.rm = TRUE))
+
+female_male_stats <- hare_weights %>% 
+   group_by(sex) %>% 
+  summarise(mean_male = round(mean(weight, na.rm = TRUE), 1),
+            median_male = median(weight, na.rm = TRUE),
+            sd_male = round(sd(weight, na.rm = TRUE),1),
             max_male = max(weight, na.rm = TRUE),
             min_male = min(weight, na.rm = TRUE))
   
 ```
 
+**Table 2.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hare weights vs juvenile male weights
+```{r}
+female_male_stats %>% 
+  kbl(col.names = c("Sex", "Mean", "Median", "Standard Deviation", " Max", "Min")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
 
-**Table 2.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hare weights
+
+**Table 3.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hare weights by site
 ```{r}
 hare_females_stats %>% 
   kbl(col.names = c("Site", "Female Mean", "Female Median", "Female Standard Deviation", "Female Max", "Female Min")) %>% 
@@ -201,7 +216,7 @@ hare_females_stats %>%
 ```
 
 
-**Table 3.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile male hare weights
+**Table 4.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile male hare weights by site
 ```{r}
 hare_males_stats %>% 
   kbl(col.names = c("Site", "Male Mean", "Male Median", "Male Standard Deviation", "Male Max", "Male Min")) %>% 
@@ -276,7 +291,7 @@ female_sd <- sd(hare_females2)
 
 ```
 
-**Analysis** On average juvenile male hares have higher weights than juvenile female hares. The male mean is (`r round(male_mean,2)` (g) $\pm$ with a standard deviation of `r round(male_sd, 2)`. The female mean is `r round(female_mean,2)` $\pm$ with a standard deviation of `r round(female_sd, 2)` (g.) The absolute difference in means is `r round(male_mean, 2) - round(female_mean, 2)` (g) which equates to a `r round((male_mean - female_mean)/((male_mean + female_mean)/2)*100, 2)` % difference). On average, the juvenile male hares have higher weight values than juvenile female hares, the difference in means is significant as indicated by the p-value from the Welch Two Sample t-test is `r round(hare_test_tidy$p.value,3)` = `r round(hare_test_tidy$statistic,2)`, p < 0.001), and the effect size is large (Cohen's *d* = `r round(hare_effsize$estimate,2)`).
+**Analysis** On average juvenile male hares have higher weights than juvenile female hares. The male mean is (`r round(male_mean,2)` (g) $\pm$ with a standard deviation of `r round(male_sd, 2)`. The female mean is `r round(female_mean,2)` $\pm$ with a standard deviation of `r round(female_sd, 2)` (g.) The absolute difference in means is `r round(male_mean, 2) - round(female_mean, 2)` (g) which equates to a `r round((male_mean - female_mean)/((male_mean + female_mean)/2)*100, 2)` % difference). On average, the juvenile male hares have higher weight values than juvenile female hares, the difference in means is significant (as indicated by the p-value from the (Welch Two Sample t-test is t(`r round(hare_test_tidy$parameter,2)` = `r round(hare_test_tidy$statistic,2)` < 0.001, p-value `r round(hare_test_tidy$p.value,3)`), and the effect size is small (Cohen's *d* = `r round(hare_effsize$estimate,2)`).
 
 ***
 
