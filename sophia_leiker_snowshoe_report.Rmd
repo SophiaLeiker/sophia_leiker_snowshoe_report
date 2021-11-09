@@ -19,8 +19,9 @@ library(effsize)
 
 ## 1. Introduction
 
-SOPHIA RETURN TO THIS AT THE END
-you will explore the counts and sizes of juvenile snowshoe hares recorded from 1998 - 2012.
+This report explores counts, sizes and physical relationships of juvenile shownow hares as recoreded from 1998 to 2012. It provides an exporatory overview and assessment of juvenile hare's in relation to their weight, site trapped and hindfoot length. The 3 sites assessed are from 1) a Bonanza Riparian is a flood zone along the Tanana River 2) Bonanza Mature consisted of stands of mature white spruce, paper birch, and alder 3) a site located in a mature lowland black spruce stand. Specifically, this report assesses the change in annual juvenile hare trap counts starting in 1998, analyzes the distribution of hare weights by site and sex, compares juvenile Weight between males and females, and finally assesses how hindfoot length (mm) is related to juvenile hare weight. 
+
+
 
 <center>
 
@@ -190,7 +191,7 @@ hare_males_stats <- hare_weights %>%
 ```
 
 
-**Table 2.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hares
+**Table 2.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hare weights
 ```{r}
 hare_females_stats %>% 
   kbl(col.names = c("Site", "Female Mean", "Female Median", "Female Standard Deviation", "Female Max", "Female Min")) %>% 
@@ -198,7 +199,7 @@ hare_females_stats %>%
 ```
 
 
-**Table 3.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile male hares
+**Table 3.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile male hare weights
 ```{r}
 hare_males_stats %>% 
   kbl(col.names = c("Site", "Male Mean", "Male Median", "Male Standard Deviation", "Male Max", "Male Min")) %>% 
@@ -265,26 +266,72 @@ hare_test_tidy <- tidy(hare_ttest)
 #Effect Size
 hare_effsize <- cohen.d(hare_females2, hare_males2)
 
+#Running stats
+male_mean <- mean(hare_males2)
+female_mean <- mean(hare_females2)
+male_sd <- sd(hare_males2)
+female_sd <- sd(hare_females2)
+
 ```
 
-**Analysis** On average 
+**Analysis** On average juvenile male hares have higher weights than juvenile female hares. The male mean is (`r round(male_mean,2)` (g) $\pm$ with a standard deviation of `r round(male_sd, 2)`. The female mean is `r round(female_mean,2)` $\pm$ with a standard deviation of `r round(female_sd, 2)` (g.) The absolute difference in means is `r round(male_mean, 2) - round(female_mean, 2)` (g) which equates to a `r round((male_mean - female_mean)/((male_mean + female_mean)/2)*100, 2)` % difference). On average, the juvenile male hares have higher weight values than juvenile female hares, the difference in means is significant as indicated by the p-value from the Welch Two Sample t-test is `r round(hare_test_tidy$p.value,3)` = `r round(hare_test_tidy$statistic,2)`, p < 0.001), and the effect size is large (Cohen's *d* = `r round(hare_effsize$estimate,2)`).
 
 ***
 
 ## 6. Relationship Between Juvenile Weight & Hindfoot Length
 
+```{r}
+
+hare_scatter <- ggplot(data =hare_weights, aes(x = hindft, y = weight)) +
+  geom_point(aes(color = sex)) +
+  scale_color_manual(values = c("deeppink3","blue","green"), 
+                     name = "Hare Sex") +
+  geom_smooth(method = lm, color = "black") +
+  labs(x = "Hindfoot Length (mm)", y = "Weight (g)", title = "Relationship between Juvenile Hare Weight & Hind Foot Length", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER") +
+  scale_x_continuous()
+
+hare_scatter
+```
+
+```{r linear regression}
+# Do linear regression
+hare_lm <- lm(hindft ~ weight, data = hare_weights)
+
+# Get tidy versions of the model output to call later on in text
+hare_lm_tidy <- tidy(hare_lm)
+hare_lm_glance <- glance(hare_lm)
+
+# See model diagnostics:
+ #plot(hare_lm)
+
+# Get Pearson's r correlation
+hare_cor <- cor.test(hare_weights$hindft, hare_weights$weight)
+
+# Tidy version of correlation output:
+hare_cor_tidy <- tidy(hare_cor)
+```
+
+
+**Figure 4** Relationship between Hindfoot Length (mm) and Hare Weight (g) for juvenile hares. Points indicate individual hare measurements with colors indicating the hare sex associated with each. $\beta$~1~ = `r round(hare_lm_tidy$estimate[2], 2)` g/mm, p < 0.001, R^2^ = `r round(hare_lm_glance$r.squared,2)`, Pearson's *r* = `r round(hare_cor_tidy$estimate,2)`).
+
+
+**Analysis** The relationship between penguin juvenile hare hindfoot length and juvenile hare weight appears relatively linear, with a visually tighter line for the female data (Figure 4). Simple linear regression shows that hindfoot length weakly predicts juvenile hare weight (p < 0.001, with an R^2 value = `r round(hare_lm_glance$r.squared,2)`), with an average slope of $\beta$ = `r round(hare_lm_tidy$estimate[2], 2)` g/mm. In other words one could say that for each milimeter increase in hindfoot length, we expect an average increase in body mass of `r round(hare_lm_tidy$estimate[2], 2)` g). Hindfoot length and body mass are are positively, significantly, and moderately positively correlated. This is seen by looking at Pearson's *r* = `r round(hare_cor_tidy$estimate,2)`, with a p value p < 0.001). Diagnostic plots reveal normally distributed and heteroscedastic residuals. This concerns me as the residuals are concentrated around the lower values of leverage in the linear model of hindfeet ~ weight. 
+
+
 ***
 
 ## 7. Summary
 
+Exploratory data analysis reveals the following initial findings: 
+
+- On average, male juvenile hares have higher weights than female juvenile hares
+- Of the three study sites, the Black spurce site on average had larger juvenile hares as indicated by larger average weights for both male and females
+- Hindfoot length appears weakly linearly related with juvenile hare weight, using linear regression the relationship is significant, though the residuals illustrate a heteroscedastic pattern, thus further data analysis should take place to explain this phenomenon
+- The linear regression relationship indicates that the expected average increase in juvenile weight (g) with a 1 mm increase in hindfoot length is `r round(hare_lm_tidy$estimate[2], 2)` g/mm.
+- Moving forward there should be further assessment to analyze if there are varying relationships between hindfoot length and weight across male hares versus female hares 
+- It would be interesting to test linear regressions and/or trends in weight as changing across time (are the hares increasing or decreasing weight since 1999)
+
 ***
-
-
-
-
-
-
-
 
 
 
