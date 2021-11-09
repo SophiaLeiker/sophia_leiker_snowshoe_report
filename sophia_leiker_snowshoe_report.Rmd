@@ -14,6 +14,7 @@ library(broom)
 library(kableExtra)
 library(janitor)
 library(ggbeeswarm)
+library(effsize)
 ```
 
 ## 1. Introduction
@@ -120,7 +121,7 @@ hare_weights <- hare_counts %>%
 
 ```{r}
 ggplot(data = hare_weights, aes(x = sex, y = weight)) +
-  geom_beeswarm(aes(color = sex)) +
+  geom_beeswarm(cex = 2, aes(color = sex)) +
   geom_boxplot(fill = NA, width = 0.4, outlier.color = NA) +
   facet_wrap(~grid) +
   scale_color_manual(values = c("deeppink3","blue","green")) + 
@@ -131,7 +132,7 @@ ggplot(data = hare_weights, aes(x = sex, y = weight)) +
                shape=15, 
                size=3, 
                color="black", 
-               fill="black") 
+               fill="black")
 
 ```
 
@@ -168,58 +169,105 @@ male_spruce <- round(mean(hare_males_spruce), 1)
 ## 5. Juvenile Weight Comparison (Male vs Female)
 
 ```{r}
-hare_females <- hare_weights %>% 
-  filter(sex == "Female")
+hare_females_stats <- hare_weights %>% 
+  filter(sex == "Female") %>% 
+  group_by(grid) %>% 
+  summarise(mean_female = mean(weight, na.rm = TRUE),
+            median_female = median(weight, na.rm = TRUE),
+            sd_female = sd(weight, na.rm = TRUE),
+            max_female = max(weight, na.rm = TRUE),
+            min_female = min(weight, na.rm = TRUE))
 
-print(hare_females)
+hare_males_stats <- hare_weights %>% 
+  filter(sex == "Male") %>%
+   group_by(grid) %>% 
+  summarise(mean_male = mean(weight, na.rm = TRUE),
+            median_male = median(weight, na.rm = TRUE),
+            sd_male = sd(weight, na.rm = TRUE),
+            max_male = max(weight, na.rm = TRUE),
+            min_male = min(weight, na.rm = TRUE))
+  
+```
+
+
+**Table 2.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hares
+```{r}
+hare_females_stats %>% 
+  kbl(col.names = c("Site", "Female Mean", "Female Median", "Female Standard Deviation", "Female Max", "Female Min")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+
+**Table 3.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile male hares
+```{r}
+hare_males_stats %>% 
+  kbl(col.names = c("Site", "Male Mean", "Male Median", "Male Standard Deviation", "Male Max", "Male Min")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+```
+
+
+
+```{r include=FALSE}
+
+#CREATING Exploratory graphs (e.g. histograms, QQ-plots) to explore assumptions of the t-test
 
 hare_males <- hare_weights %>% 
   filter(sex == "Male")
-```
 
-```{r include=FALSE}
-#CREATING Exploratory graphs (e.g. histograms, QQ-plots) to explore assumptions of the t-test
+hare_females <- hare_weights %>% 
+  filter(sex == "Female")
+  
 
 #Lets create some histograms
 ggplot(data = hare_weights, aes(x= weight, fill = sex)) + 
   geom_histogram() +
   labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Hare Weights by Sex", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
+#both are somewhat normal, male has a dip in the middle
 
-ggplot(data = hare_females, aes(x= weight)) + 
-  geom_histogram() +
-  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Female Hare Weights", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
-
-
-# Lets make some QQ plots
-ggplot(data = hare_females, aes(sample = weight)) +
-  geom_qq() +
-  labs(title = "QQ for Females")
 
 ggplot(data = hare_males, aes(x= weight)) + 
   geom_histogram() +
   labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Male Hare Weights", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
 
+ggplot(data = hare_females, aes(x= weight)) + 
+  geom_histogram() +
+  labs(x = "Hare Weight (g)", y = "Count of Hare Weights", title = "Distribution of Male Hare Weights", subtitle = "Data from: Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER")
+
+# Lets make some QQ plots
 ggplot(data = hare_males, aes(sample = weight)) +
   geom_qq() +
   labs(title = "QQ for Males")
+#fairly linear, some curvature at lower values
+
+ggplot(data = hare_females, aes(sample = weight)) +
+  geom_qq() +
+  labs(title = "QQ for Females")
+#pretty linear
+
+#I would argue that the assumptions for normality hold! Thus will continue with carrying out a t-test
 ```
 
-```{r}
-hare_female_stats <- hare_females %>% 
-  summarise(female_mean = round(mean(weight),1)
-            #female_median = median(weight),
-           # female_sd = round(sd(weight),1),
-            #female_max = max(weight),
-            #female_min = min(weight)
-            )
+```{r doing t-test}
+hare_males2 <- hare_males %>%
+  drop_na(weight) %>% 
+  pull(weight)
 
-print(hare_female_stats)
+hare_females2 <- hare_females %>%
+  drop_na(weight) %>% 
+  pull(weight)
 
-hare_female_stats %>% 
-  kbl(col.names = c("Female Weight Mean", "Female Weight Median", "Female Weeight Standard Deviation", "Female Weight Max", "Female Weight Min")) %>% 
-  kable_styling(bootstrap_options = "striped", full_width = FALSE)
+#running ttest
+hare_ttest <- t.test(hare_females2, hare_males2)
+
+#tidy it up!
+hare_test_tidy <- tidy(hare_ttest)
+
+#Effect Size
+hare_effsize <- cohen.d(hare_females2, hare_males2)
+
 ```
 
+**Analysis** On average 
 
 ***
 
