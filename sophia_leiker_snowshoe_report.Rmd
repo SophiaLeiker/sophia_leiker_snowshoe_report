@@ -200,7 +200,7 @@ female_male_stats <- hare_weights %>%
   
 ```
 
-**Table 2.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hare weights vs juvenile male weights
+**Table 2.** Descriptive Statistics for Juvenile Female Hare Weights vs Juvenile Male Weights (mean, median, standard deviation, min, and max) 
 ```{r}
 female_male_stats %>% 
   kbl(col.names = c("Sex", "Mean", "Median", "Standard Deviation", " Max", "Min")) %>% 
@@ -208,7 +208,7 @@ female_male_stats %>%
 ```
 
 
-**Table 3.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile female hare weights by site
+**Table 3.** Descriptive Statistics for Juvenile Female Hare Weights by Site (mean, median, standard deviation, min, and max)
 ```{r}
 hare_females_stats %>% 
   kbl(col.names = c("Site", "Female Mean", "Female Median", "Female Standard Deviation", "Female Max", "Female Min")) %>% 
@@ -216,7 +216,7 @@ hare_females_stats %>%
 ```
 
 
-**Table 4.** Descriptive statistics (mean, median, standard deviation, min, and max) for juvenile male hare weights by site
+**Table 4.** Descriptive Statistics for Juvenile Male Hare Weights by Site (mean, median, standard deviation, min, and max)
 ```{r}
 hare_males_stats %>% 
   kbl(col.names = c("Site", "Male Mean", "Male Median", "Male Standard Deviation", "Male Max", "Male Min")) %>% 
@@ -334,7 +334,7 @@ hare_cor_tidy <- tidy(hare_cor)
 **Figure 4** Relationship between Hindfoot Length (mm) and Hare Weight (g) for juvenile hares. Points indicate individual hare measurements with colors indicating the hare sex associated with each. $\beta$~1~ = `r round(hare_lm_tidy$estimate[2], 2)` g/mm, p < 0.001, R^2^ = `r round(hare_lm_glance$r.squared,2)`, Pearson's *r* = `r round(hare_cor_tidy$estimate,2)`).
 
 
-**Analysis** The relationship between penguin juvenile hare hindfoot length and juvenile hare weight appears relatively linear, with a visually tighter line for the female data (Figure 4). Simple linear regression shows that hindfoot length weakly predicts juvenile hare weight (p < 0.001, with an R^2 value = `r round(hare_lm_glance$r.squared,2)`), with an average slope of $\beta$ = `r round(hare_lm_tidy$estimate[2], 2)` g/mm. In other words one could say that for each milimeter increase in hindfoot length, we expect an average increase in body mass of `r round(hare_lm_tidy$estimate[2], 2)` g). Hindfoot length and body mass are are positively, significantly, and moderately positively correlated. This is seen by looking at Pearson's *r* = `r round(hare_cor_tidy$estimate,2)`, with a p value p < 0.001). Diagnostic plots reveal normally distributed and heteroscedastic residuals. This concerns me as the residuals are concentrated around the lower values of leverage in the linear model of hindfeet ~ weight. 
+**Analysis** The relationship between juvenile hare hind foot length and juvenile hare weight appears relatively linear, with a visually tighter line for the female data (Figure 4). Simple linear regression shows that hindfoot length weakly predicts juvenile hare weight (p < 0.001, with an R^2 value = `r round(hare_lm_glance$r.squared,2)`), with an average slope of $\beta$ = `r round(hare_lm_tidy$estimate[2], 2)` g/mm. In other words one could say that for each milimeter increase in hindfoot length, we expect an average increase in body mass of `r round(hare_lm_tidy$estimate[2], 2)` g). Given the R^2 value, it is stating that 30% of the variance of the hare weight is explained by the variance of the hind foot length. Hindfoot length and body mass are are moderately, significantly, and positively correlated. This is seen by looking at Pearson's *r* = `r round(hare_cor_tidy$estimate,2)`, with a p value p < 0.001). Diagnostic plots reveal normally distributed and heteroscedastic residuals. This concerns me as the residuals are concentrated around the lower values of leverage in the linear model of hind feet ~ weight. 
 
 
 ***
